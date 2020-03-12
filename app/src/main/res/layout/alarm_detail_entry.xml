@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <ToggleButton
+            android:id="@+id/alarmSelectionMonday"
+            style="@style/AppTheme.DaySelector"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:allowUndo="true"
+            android:checked="false"
+            android:textAllCaps="false"
+            android:textOff="@string/daySelectionMonday"
+            android:textOn="@string/daySelectionMonday"
+            android:textSize="12sp"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <ToggleButton
+            android:id="@+id/alarmSelectionTuesday"
+            style="@style/AppTheme.DaySelector"
+            android:layout_marginStart="8dp"
+            android:textOff="@string/daySelectionTuesday"
+            android:textOn="@string/daySelectionTuesday"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/alarmSelectionMonday"
+            app:layout_constraintTop_toTopOf="@+id/alarmSelectionMonday" />
+
+    <ToggleButton
+            android:id="@+id/alarmSelectionWednesday"
+            style="@style/AppTheme.DaySelector"
+            android:layout_marginStart="8dp"
+            android:textOff="@string/daySelectionWednesday"
+            android:textOn="@string/daySelectionWednesday"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/alarmSelectionTuesday"
+            app:layout_constraintTop_toTopOf="@+id/alarmSelectionMonday" />
+
+    <ToggleButton
+            android:id="@+id/alarmSelectionThursday"
+            style="@style/AppTheme.DaySelector"
+            android:layout_marginStart="8dp"
+            android:textOff="@string/daySelectionThursday"
+            android:textOn="@string/daySelectionThursday"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/alarmSelectionWednesday"
+            app:layout_constraintTop_toTopOf="@+id/alarmSelectionMonday" />
+
+    <ToggleButton
+            android:id="@+id/alarmSelectionFriday"
+            style="@style/AppTheme.DaySelector"
+            android:layout_marginStart="8dp"
+            android:textOff="@string/daySelectionFriday"
+            android:textOn="@string/daySelectionFriday"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/alarmSelectionThursday"
+            app:layout_constraintTop_toTopOf="@+id/alarmSelectionMonday" />
+
+    <ToggleButton
+            android:id="@+id/alarmSelectionSaturday"
+            style="@style/AppTheme.DaySelector"
+            android:layout_marginStart="8dp"
+            android:textOff="@string/daySelectionSaturday"
+            android:textOn="@string/daySelectionSaturday"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/alarmSelectionFriday"
+            app:layout_constraintTop_toTopOf="@+id/alarmSelectionMonday" />
+
+    <ToggleButton
+            android:id="@+id/alarmSelectionSunday"
+            style="@style/AppTheme.DaySelector"
+            android:layout_marginStart="8dp"
+            android:textOff="@string/daySelectionSunday"
+            android:textOn="@string/daySelectionSunday"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/alarmSelectionSaturday"
+            app:layout_constraintTop_toTopOf="@+id/alarmSelectionMonday" />
+
+    <RadioGroup
+            android:id="@+id/frequencySelection"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/alarmSelectionMonday">
+
+        <RadioButton
+                android:id="@+id/repeatSelectionDaily"
+                android:layout_width="60dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="-10dp"
+                android:layout_weight="1"
+                android:scaleX=".7"
+                android:scaleY=".7"
+                android:text="@string/repeatSelectionDaily"
+                android:textAlignment="textStart"
+                android:textSize="12sp" />
+
+        <RadioButton
+                android:id="@+id/repeatSelectionWeekly"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginStart="-10dp"
+                android:layout_weight="1"
+                android:scaleX=".7"
+                android:scaleY=".7"
+                android:text="@string/repeatSelectionWeekly"
+                android:textAlignment="center"
+                android:textSize="12sp" />
+
+        <RadioButton
+                android:id="@+id/repeatSelectionTwoWeekly"
+                android:layout_width="96dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="-10dp"
+                android:layout_weight="1"
+                android:scaleX=".7"
+                android:scaleY=".7"
+                android:text="@string/repeatSelectionTwoWeekly"
+                android:textAlignment="center"
+                android:textSize="12sp" />
+
+        <RadioButton
+                android:id="@+id/repeatSelectionMonthly"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginStart="-10dp"
+                android:layout_weight="1"
+                android:scaleX=".7"
+                android:scaleY=".7"
+                android:text="@string/repeatSelectionMonthly"
+                android:textAlignment="center"
+                android:textSize="12sp" />
+    </RadioGroup>
+
+    <TextView
+            android:id="@+id/setAlarmTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="28dp"
+            android:ems="4"
+            android:hint="@string/timeHint"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/frequencySelection"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="Autofill" />
+
+    <TextView
+            android:id="@+id/setAlarmBegin"
+            android:layout_width="100dp"
+            android:layout_height="19dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:ems="4"
+            android:hint="@string/dateHint"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/setAlarmTime"
+            tools:ignore="Autofill" />
+</android.support.constraint.ConstraintLayout>

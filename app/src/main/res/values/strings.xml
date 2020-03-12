@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">ALlarma</string>
+    <string name="createAlert">set alert</string>
+    <string name="addProfile">add new profile</string>
+    <string name="profileName">Name:</string>
+    <string name="profileAccept">Accept</string>
+    <string name="profileAddAlarm">add alarm</string>
+    <string name="editProfile">edit profile</string>
+    <string name="toggleProfile">on/off</string>
+    <string name="daySelectionMonday">Mo</string>
+    <string name="daySelectionTuesday">Tu</string>
+    <string name="daySelectionWednesday">We</string>
+    <string name="daySelectionThursday">Th</string>
+    <string name="daySelectionFriday">Fr</string>
+    <string name="daySelectionSaturday">Sa</string>
+    <string name="daySelectionSunday">Su</string>
+    <string name="repeatSelectionDaily">daily</string>
+    <string name="repeatSelectionWeekly">weekly</string>
+    <string name="repeatSelectionTwoWeekly">two-weekly</string>
+    <string name="repeatSelectionMonthly">monthly</string>
+    <string name="timeHint">HH:MM</string>
+    <string name="dateHint">DD:MM:YYYY</string>
+    <string name="editAlert">edit alert</string>
+
+</resources>

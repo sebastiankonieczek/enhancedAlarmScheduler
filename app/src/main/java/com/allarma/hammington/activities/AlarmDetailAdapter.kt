@@ -2,7 +2,7 @@ package com.allarma.hammington.activities
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +10,13 @@ import android.view.ViewGroup
 import android.widget.*
 import com.allarma.hammington.model.Alarm
 import com.allarma.hammington.model.AlarmProfile
+import com.allarma.hammington.model.AlarmProfileWithAlarms
 import java.lang.IllegalStateException
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.util.*
 
-class AlarmDetailAdapter( context: AlarmProfileDetailActivity, alarmProfile: AlarmProfile ) : SwipeHandler, RecyclerView.Adapter< AlarmDetailAdapter.ViewHolder >() {
+class AlarmDetailAdapter( context: AlarmProfileDetailActivity, alarmProfile: AlarmProfileWithAlarms ) : SwipeHandler, RecyclerView.Adapter< AlarmDetailAdapter.ViewHolder >() {
     private val alarmProfile_ = alarmProfile
 
     private val context_ = context
@@ -44,23 +47,21 @@ class AlarmDetailAdapter( context: AlarmProfileDetailActivity, alarmProfile: Ala
         } }
 
 
-        val current = Calendar.getInstance()
+        var current = LocalDate.now()
         if( item.getAlarmStartDate() != null ) {
-            current.time = item.getAlarmStartDate()
-            viewHolder.setAlarmBegin_.text = createDisplayDate( current.get( Calendar.DAY_OF_MONTH ), current.get( Calendar.MONTH ) + 1, current.get( Calendar.YEAR ) )
+            current = item.getAlarmStartDate()
+            viewHolder.setAlarmBegin_.text = createDisplayDate( current.dayOfMonth, current.monthValue, current.year )
         }
         else viewHolder.setAlarmBegin_.text = null
         viewHolder.setAlarmBegin_.setOnClickListener{ kotlin.run {
             val datePicker = DatePickerDialog( context_, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 Log.println( Log.INFO,"","${dayOfMonth}${month}${year}" )
                 viewHolder.setAlarmBegin_.text = createDisplayDate( dayOfMonth, month + 1, year )
-                val instance = Calendar.getInstance()
-                instance.set( year, month, dayOfMonth )
-                item.setAlarmStartDate( instance.time )
-            }, current.get( Calendar.YEAR ), current.get( Calendar.MONTH ), current.get( Calendar.DAY_OF_MONTH ) )
+                item.setAlarmStartDate( LocalDate.of( year, month, dayOfMonth ) )
+            }, current.year, current.monthValue, current.dayOfMonth )
 
-            val now =Calendar.getInstance()
-            datePicker.datePicker.minDate = if( current > now ) now.timeInMillis else current.timeInMillis
+            val now = LocalDate.now()
+            datePicker.datePicker.minDate = if( current > now ) now.toEpochDay() else current.toEpochDay()
             datePicker.show()
         } }
         bindDaySelection(item, viewHolder)

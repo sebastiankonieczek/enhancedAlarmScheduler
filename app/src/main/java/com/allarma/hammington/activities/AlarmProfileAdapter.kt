@@ -1,37 +1,39 @@
 package com.allarma.hammington.activities
 
 import android.content.Intent
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Switch
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
 import com.allarma.hammington.model.AlarmProfile
+import com.allarma.hammington.model.AlarmProfileWithAlarms
 import java.io.Serializable
 
-class AlarmProfileAdapter( context: AlarmProfileOverviewActivity, items: MutableList< AlarmProfile > ) : RecyclerView.Adapter< AlarmProfileAdapter.ViewHolder >(), SwipeHandler {
+class AlarmProfileAdapter( context: AlarmProfileOverviewActivity, items: MutableList< AlarmProfileWithAlarms > ) : RecyclerView.Adapter< AlarmProfileAdapter.ViewHolder >(), SwipeHandler {
     private val items_ = items
     private val context_ = context
 
     class ViewHolder( view: View ) : RecyclerView.ViewHolder( view ) {
         val profileName_: TextView = view.findViewById( R.id.profileName )
         var profileEdit_: ImageButton = view.findViewById( R.id.editProfile )
-        val profileActive_: Switch = view.findViewById( R.id.profileActive )
+        val profileActive_: SwitchCompat = view.findViewById( R.id.profileActive )
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val item = getItem(position)
-        viewHolder.profileName_.text = item.getName()
-        viewHolder.profileActive_.isChecked = item.isActive()
+        viewHolder.profileName_.text = item.alarmProfile_.getName()
+        viewHolder.profileActive_.isChecked = item.alarmProfile_.isActive()
         viewHolder.profileActive_.setOnClickListener { run {
-            item.setActive( viewHolder.profileActive_.isChecked )
+            item.alarmProfile_.setActive( viewHolder.profileActive_.isChecked )
             context_.mergeProfiles()
         } }
 
         viewHolder.profileEdit_.setOnClickListener { run {
-            var intent = Intent( context_.applicationContext, AlarmProfileDetailActivity::class.java )
+            val intent = Intent( context_.applicationContext, AlarmProfileDetailActivity::class.java )
             intent.putExtra( "EDIT_PROFILE", item as Serializable )
             intent.putExtra( "POSITION", items_.indexOf(item) )
 
@@ -40,10 +42,10 @@ class AlarmProfileAdapter( context: AlarmProfileOverviewActivity, items: Mutable
     }
 
     override fun getItemId(position: Int): Long {
-        return position as Long
+        return position.toLong()
     }
 
-    private fun getItem( position: Int ) : AlarmProfile {
+    private fun getItem( position: Int ) : AlarmProfileWithAlarms {
         return items_[ position ]
     }
 

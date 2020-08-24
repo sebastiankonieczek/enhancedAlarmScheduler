@@ -1,13 +1,13 @@
 package com.allarma.hammington.activities
 
 import android.content.Context
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.ItemTouchHelper
 
 class SwipeHandlerCallback( context: Context, swipeHandler: SwipeHandler ) : ItemTouchHelper.SimpleCallback( ItemTouchHelper.UP or ItemTouchHelper.DOWN, ItemTouchHelper.LEFT ) {
     private val swipeHandler_ = swipeHandler
 
-    override fun onSwiped( viewHolder: RecyclerView.ViewHolder, direction: Int) {
+    override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
         swipeHandler_.removeAt( viewHolder.adapterPosition )
     }
 

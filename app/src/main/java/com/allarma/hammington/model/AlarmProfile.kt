@@ -3,11 +3,7 @@ package com.allarma.hammington.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.Relation
-import com.allarma.hammington.activities.SwipeHandler
-import com.allarma.hammington.activities.SwipeHandlerCallback
 import java.io.Serializable
-import java.util.*
 
 @Entity(tableName = "ALARM_PROFILE_")
 data class AlarmProfile(
@@ -15,7 +11,9 @@ data class AlarmProfile(
     @ColumnInfo(name = "NAME_")
     var name_: String,
     @ColumnInfo(name = "IS_ACTIVE_")
-    var active_: Boolean = false
+    var active_: Boolean = false,
+    @ColumnInfo( name = "ORDER_" )
+    var order_: Int
 ) : Serializable {
     fun getName(): String {
         return name_
@@ -32,4 +30,13 @@ data class AlarmProfile(
     fun setActive(active: Boolean) {
         active_ = active
     }
+
+    fun getOrder(): Int {
+        return order_
+    }
+
+    fun setOrder( order: Int ) {
+        order_ = order
+    }
+
 }

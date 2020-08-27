@@ -9,7 +9,7 @@ import com.allarma.hammington.model.Alarm
 import com.allarma.hammington.model.AlarmProfile
 import com.allarma.hammington.model.Converters
 
-@Database(entities = [AlarmProfile::class, Alarm::class], version = 1)
+@Database(entities = [AlarmProfile::class, Alarm::class], version = 2)
 @TypeConverters(Converters::class)
 internal abstract class AppDatabase : RoomDatabase() {
 
@@ -27,6 +27,6 @@ internal abstract class AppDatabase : RoomDatabase() {
         private fun buildDatabase( context: Context ) = Room.databaseBuilder(
             context,
             AppDatabase::class.java, "allarma_data"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 }

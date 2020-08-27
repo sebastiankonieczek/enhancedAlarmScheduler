@@ -3,16 +3,14 @@ package com.allarma.hammington.activities
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import com.google.android.material.textfield.TextInputEditText
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.ItemTouchHelper
-import android.text.Editable
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.allarma.hammington.model.Alarm
 import com.allarma.hammington.model.AlarmProfile
 import com.allarma.hammington.model.AlarmProfileWithAlarms
@@ -34,7 +32,7 @@ class AlarmProfileDetailActivity : AppCompatActivity() {
             position_ = intent.extras!![ "POSITION" ] as Int
         }
         else {
-            alarmProfile_ = AlarmProfileWithAlarms( AlarmProfile( "", false ) )
+            alarmProfile_ = AlarmProfileWithAlarms( AlarmProfile( "", false, 0 ) )
         }
 
         viewAdapter_ = AlarmDetailAdapter( this, alarmProfile_!! )

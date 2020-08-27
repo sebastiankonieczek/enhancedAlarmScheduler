@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.allarma.hammington.model.Alarm
-import com.allarma.hammington.model.AlarmProfile
 import com.allarma.hammington.model.AlarmProfileViewModel
 import com.allarma.hammington.model.AlarmProfileWithAlarms
 
@@ -18,16 +17,14 @@ class AlarmProfileOverviewActivity : AppCompatActivity() {
 
     private lateinit var viewAdapter_: AlarmProfileAdapter
     private var profiles_: MutableList< AlarmProfileWithAlarms > = mutableListOf()
-    private val internalOverallProfile_ = AlarmProfileWithAlarms( AlarmProfile("internal", false ) )
+    private val model: AlarmProfileViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val model: AlarmProfileViewModel by viewModels()
 
         setContentView(R.layout.activity_alarm_profile_overview)
-        viewAdapter_ = AlarmProfileAdapter( this, profiles_ )
-        val viewLayoutManager =
-            LinearLayoutManager(this)
+        viewAdapter_ = AlarmProfileAdapter( this, model )
+        val viewLayoutManager = LinearLayoutManager(this)
 
         val recyclerView = findViewById<RecyclerView>( R.id.alarmProfiles )
         recyclerView.apply {
@@ -54,13 +51,12 @@ class AlarmProfileOverviewActivity : AppCompatActivity() {
     fun mergeProfiles()
     {
         val reversedProfiles = profiles_.reversed()
-        internalOverallProfile_.clearAlarms()
-        val aciveAlarms = HashSet< Alarm >()
+        val activeAlarms = HashSet< Alarm >()
         reversedProfiles.forEach{ profile ->
             if( !profile.alarmProfile_.isActive() ) {
                 return
             }
-            aciveAlarms.addAll( profile.getAlarms() )
+            activeAlarms.addAll( profile.getAlarms() )
         }
     }
 
@@ -70,8 +66,7 @@ class AlarmProfileOverviewActivity : AppCompatActivity() {
             if( data != null ) {
                 val alarmProfile: AlarmProfileWithAlarms? = data.extras?.get(REQUEST_RESULT) as AlarmProfileWithAlarms
                 if( alarmProfile != null ) {
-                    profiles_.add(alarmProfile)
-                    viewAdapter_.notifyDataSetChanged()
+                    model.addProfile(alarmProfile.alarmProfile_)
                 }
             }
         }

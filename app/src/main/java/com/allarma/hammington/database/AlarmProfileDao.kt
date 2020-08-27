@@ -1,17 +1,14 @@
 package com.allarma.hammington.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Transaction
+import androidx.room.*
 import com.allarma.hammington.model.Alarm
 import com.allarma.hammington.model.AlarmProfile
 import com.allarma.hammington.model.AlarmProfileWithAlarms
 
 @Dao
 internal interface AlarmProfileDao {
-    @Query("SELECT * FROM ALARM_PROFILE_")
+    @Query("SELECT * FROM ALARM_PROFILE_ order by ORDER_ asc")
     fun getAlarmProfiles(): LiveData< List<AlarmProfile> >
 
     @Transaction
@@ -28,4 +25,8 @@ internal interface AlarmProfileDao {
     @Transaction
     @Insert
     fun insertAlarms( vararg alarm: Alarm)
+
+    @Transaction
+    @Delete
+    fun removeProfile( vararg alarmProfile: AlarmProfile)
 }

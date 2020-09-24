@@ -3,7 +3,6 @@ package com.allarma.hammington.model
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import java.time.DayOfWeek
 import java.time.LocalDate
 
 class Converters {
@@ -19,8 +18,9 @@ class Converters {
     fun dayOfWeekListToString(value: List< Alarm.DayOfWeek >?): String? = value?.let { Gson().toJson( it ) }
     @TypeConverter
     fun stringToDayOfWeekList(value: String?): MutableList< Alarm.DayOfWeek >? = value?.let {
-        val type = object : TypeToken<List< DayOfWeek >>() {}.type
-        return mutableListOf( Gson().fromJson( it, type ) ) }
+        val type = object: TypeToken<List<Alarm.DayOfWeek>>() {}.type
+        val elements: List< Alarm.DayOfWeek > = Gson().fromJson( it, type)
+        return elements.toMutableList() }
     @TypeConverter
     fun dateToString( value: LocalDate? ) : String? = value?.toString()
     @TypeConverter

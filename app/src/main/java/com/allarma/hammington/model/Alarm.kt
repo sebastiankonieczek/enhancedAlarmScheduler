@@ -3,7 +3,6 @@ package com.allarma.hammington.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverter
 import java.io.Serializable
 import java.time.LocalDate
 import java.util.*
@@ -15,7 +14,8 @@ data class Alarm(@ColumnInfo(name = "PROFILE_NAME_")
                  var minute_: Int? = null,
                  var frequency_: Frequency = Frequency.UNKNOWN,
                  val selectedDays_: MutableList< DayOfWeek > = mutableListOf(),
-                 var alarmStartDate_: LocalDate? = null ) : Serializable {
+                 var alarmStartDate_: LocalDate? = null,
+                 var order_: Int = 0 ) : Serializable {
 
     @PrimaryKey( autoGenerate = true )
     var alarmId: Long = 0
@@ -31,8 +31,6 @@ data class Alarm(@ColumnInfo(name = "PROFILE_NAME_")
     enum class DayOfWeek {
         MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
     }
-
-
 
     fun getHour(): Int? {
         return hour_
@@ -77,6 +75,15 @@ data class Alarm(@ColumnInfo(name = "PROFILE_NAME_")
     fun getAlarmStartDate(): LocalDate? {
         return alarmStartDate_
     }
+
+    fun getOrder(): Int {
+        return order_
+    }
+
+    fun setOrder( order: Int ) {
+        order_ = order
+    }
+
 
     override fun hashCode(): Int {
         return Objects.hash(hour_, minute_, frequency_, selectedDays_, alarmStartDate_)

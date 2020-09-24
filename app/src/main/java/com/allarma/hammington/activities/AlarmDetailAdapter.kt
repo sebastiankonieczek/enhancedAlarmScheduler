@@ -2,24 +2,29 @@ package com.allarma.hammington.activities
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import androidx.recyclerview.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.RecyclerView
 import com.allarma.hammington.model.Alarm
-import com.allarma.hammington.model.AlarmProfile
-import com.allarma.hammington.model.AlarmProfileWithAlarms
-import java.lang.IllegalStateException
+import com.allarma.hammington.model.ProfileDetailsViewModel
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.*
 
-class AlarmDetailAdapter( context: AlarmProfileDetailActivity, alarmProfile: AlarmProfileWithAlarms ) : SwipeHandler, RecyclerView.Adapter< AlarmDetailAdapter.ViewHolder >() {
-    private val alarmProfile_ = alarmProfile
+class AlarmDetailAdapter(context: AlarmProfileDetailActivity, model: ProfileDetailsViewModel ) : SwipeHandler, RecyclerView.Adapter< AlarmDetailAdapter.ViewHolder >() {
+    private lateinit var _viewList: MutableList<Alarm>
+    private val _context = context
 
-    private val context_ = context
+    init {
+        model.getAlarms().observe( context, Observer { newList ->
+            _viewList = newList.toMutableList()
+            notifyDataSetChanged()
+            updateOrder()
+        } )
+    }
+
     class ViewHolder( view: View ) : RecyclerView.ViewHolder( view ) {
         val alarmSelectionMonday_ = view.findViewById< ToggleButton >( R.id.alarmSelectionMonday )
         val alarmSelectionTuesday_ = view.findViewById< ToggleButton >( R.id.alarmSelectionTuesday )
@@ -39,7 +44,7 @@ class AlarmDetailAdapter( context: AlarmProfileDetailActivity, alarmProfile: Ala
         }
         else viewHolder.setAlarmTime_.text = null
         viewHolder.setAlarmTime_.setOnClickListener { kotlin.run {
-            TimePickerDialog( context_, TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+            TimePickerDialog( _context, TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
                 viewHolder.setAlarmTime_.text = createDisplayTime(hourOfDay, minute)
                 item.setHour( hourOfDay )
                 item.setMinute( minute )
@@ -54,7 +59,7 @@ class AlarmDetailAdapter( context: AlarmProfileDetailActivity, alarmProfile: Ala
         }
         else viewHolder.setAlarmBegin_.text = null
         viewHolder.setAlarmBegin_.setOnClickListener{ kotlin.run {
-            val datePicker = DatePickerDialog( context_, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            val datePicker = DatePickerDialog( _context, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
                 Log.println( Log.INFO,"","${dayOfMonth}${month}${year}" )
                 viewHolder.setAlarmBegin_.text = createDisplayDate( dayOfMonth, month + 1, year )
                 item.setAlarmStartDate( LocalDate.of( year, month, dayOfMonth ) )
@@ -189,7 +194,7 @@ class AlarmDetailAdapter( context: AlarmProfileDetailActivity, alarmProfile: Ala
     }
 
     override fun getItemCount(): Int {
-        return alarmProfile_.getAlarms().size
+        return _viewList.size
     }
 
     override fun onCreateViewHolder( viewGroup: ViewGroup, position: Int): ViewHolder {
@@ -197,19 +202,25 @@ class AlarmDetailAdapter( context: AlarmProfileDetailActivity, alarmProfile: Ala
     }
 
     private fun getItem( position: Int ) : Alarm {
-        return alarmProfile_.getAlarms()[ position ]
+        return _viewList[ position ]
     }
 
     override fun removeAt( position: Int ) {
-        if( position < 0 || position >= alarmProfile_.getAlarms().size ) {
+        if( position < 0 || position >= _viewList.size ) {
             return
         }
-        alarmProfile_.removeAt( position )
+        _viewList.removeAt( position )
         notifyItemRemoved( position )
     }
 
     override fun move(from: Int, to: Int) {
-        alarmProfile_.move( from, to )
+        val item = _viewList.removeAt(from)
+        _viewList.add( to, item )
         notifyItemMoved( from, to )
+        updateOrder()
+    }
+
+    private fun updateOrder() {
+        _viewList.forEachIndexed { index, alarm -> alarm.setOrder( index )  }
     }
 }

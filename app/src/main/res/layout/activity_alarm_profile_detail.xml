@@ -7,7 +7,9 @@
         android:layout_height="match_parent"
         tools:context=".AlarmProfileDetailActivity">
 
-    <LinearLayout android:id="@+id/itemsContainer" android:layout_width="match_parent" android:layout_height="386dp"
+    <LinearLayout android:id="@+id/itemsContainer"
+                  android:layout_width="match_parent"
+                  android:layout_height="386dp"
                   android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/profileName"
                   app:layout_constraintStart_toStartOf="parent">
         <androidx.recyclerview.widget.RecyclerView

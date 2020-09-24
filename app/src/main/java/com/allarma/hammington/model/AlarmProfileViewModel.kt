@@ -12,10 +12,9 @@ import kotlinx.coroutines.launch
 class AlarmProfileViewModel( application: Application ) : AndroidViewModel( application )
 {
     private val dao: AlarmProfileDao = AppDatabase( application ).dao()
-    private val newItems: MutableList< AlarmProfile > = mutableListOf()
 
     private val _profiles : LiveData< List< AlarmProfile > > by lazy {
-        loadProfiles()
+        dao.getAlarmProfiles()
     }
 
     fun getProfiles(): LiveData< List< AlarmProfile > > {
@@ -29,7 +28,34 @@ class AlarmProfileViewModel( application: Application ) : AndroidViewModel( appl
         }
     }
 
-    private fun loadProfiles() : LiveData<List<AlarmProfile>> {
-        return dao.getAlarmProfiles();
+    private fun removeProfile(alarmProfile: AlarmProfile ) {
+        viewModelScope.launch( Dispatchers.IO ) {
+            dao.removeProfileAndAlarms(alarmProfile)
+        }
+    }
+
+    fun updateAll() {
+        viewModelScope.launch( Dispatchers.IO ) {
+            dao.updateAll( *_profiles.value?.toTypedArray()?: emptyArray() )
+        }
+    }
+
+    fun removeProfiles(posStart: Int, numItems: Int) {
+        if( _profiles.value?.size?:0 <= ( posStart + numItems - 1 ) ) {
+            return
+        }
+        for( i in 0 until numItems ) {
+           removeProfile( _profiles.value?.get(posStart + i )!! )
+        }
+    }
+
+    fun addAlarm(alarm_: Alarm) {
+        viewModelScope.launch( Dispatchers.IO ) {
+            dao.insertAlarms( alarm_ )
+        }
+    }
+
+    fun getAlarms(alarmProfile: AlarmProfile): List< Alarm > {
+        return dao.getAlarms( alarmProfile.getName() ).value ?: emptyList()
     }
 }

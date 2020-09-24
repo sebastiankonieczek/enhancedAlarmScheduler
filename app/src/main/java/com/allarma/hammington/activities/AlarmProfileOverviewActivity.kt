@@ -24,6 +24,11 @@ class AlarmProfileOverviewActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_alarm_profile_overview)
         viewAdapter_ = AlarmProfileAdapter( this, model )
+        viewAdapter_.registerAdapterDataObserver( object: RecyclerView.AdapterDataObserver() {
+            override fun onItemRangeRemoved( posStart: Int, numItems: Int ) {
+                model.removeProfiles( posStart, numItems )
+            }
+        })
         val viewLayoutManager = LinearLayoutManager(this)
 
         val recyclerView = findViewById<RecyclerView>( R.id.alarmProfiles )
@@ -31,20 +36,16 @@ class AlarmProfileOverviewActivity : AppCompatActivity() {
             setHasFixedSize( true )
             adapter = viewAdapter_
             layoutManager = viewLayoutManager
-        }.addItemDecoration(
-            DividerItemDecoration(
-                this,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+        }.addItemDecoration( DividerItemDecoration( this, LinearLayoutManager.VERTICAL ) )
 
-        val itemTouchHelper = ItemTouchHelper( SwipeHandlerCallback( this, viewAdapter_ ) )
+        val itemTouchHelper = ItemTouchHelper( SwipeHandlerCallback(viewAdapter_) )
         itemTouchHelper.attachToRecyclerView( recyclerView )
 
         val addProfile: Button = findViewById( R.id.addProfile )
         addProfile.setOnClickListener { run {
             val intent = Intent( this.applicationContext, AlarmProfileDetailActivity::class.java )
-            startActivityForResult( intent, REQUEST_ADD_PROFILE )
+            intent.putExtra( "ORDER", viewAdapter_.itemCount )
+            startActivity( intent )
         } }
     }
 
@@ -60,32 +61,12 @@ class AlarmProfileOverviewActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if( requestCode == REQUEST_ADD_PROFILE ) {
-            if( data != null ) {
-                val alarmProfile: AlarmProfileWithAlarms? = data.extras?.get(REQUEST_RESULT) as AlarmProfileWithAlarms
-                if( alarmProfile != null ) {
-                    model.addProfile(alarmProfile.alarmProfile_)
-                }
-            }
-        }
-
-        if( requestCode == REQUEST_EDIT_PROFILE ) {
-            if( data != null ) {
-                val alarmProfile: AlarmProfileWithAlarms? = data.extras?.get(REQUEST_RESULT) as AlarmProfileWithAlarms
-                val position: Int? = data.extras!![ "POSITION" ] as Int
-                if( alarmProfile != null && position != null ) {
-                    profiles_[ position ] = alarmProfile
-                    viewAdapter_.notifyDataSetChanged()
-                }
-            }
-        }
+    override fun onPause() {
+        super.onPause()
+        model.updateAll();
     }
 
     companion object {
-        const val REQUEST_ADD_PROFILE = 100
         const val REQUEST_EDIT_PROFILE = 200
-        const val REQUEST_RESULT = "PROFILE"
     }
 }

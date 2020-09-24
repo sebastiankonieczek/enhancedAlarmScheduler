@@ -11,10 +11,8 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.allarma.hammington.model.AlarmProfile
 import com.allarma.hammington.model.AlarmProfileViewModel
-import java.io.Serializable
 
 class AlarmProfileAdapter( context: AlarmProfileOverviewActivity, model: AlarmProfileViewModel ) : RecyclerView.Adapter< AlarmProfileAdapter.ViewHolder >(), SwipeHandler {
-    private var _model = model
     private val context_ = context
     private var _viewList: MutableList< AlarmProfile > = mutableListOf()
 
@@ -27,6 +25,8 @@ class AlarmProfileAdapter( context: AlarmProfileOverviewActivity, model: AlarmPr
     init {
        model.getProfiles().observe( context, Observer { newList ->
            _viewList = newList.toMutableList()
+           updateOrder()
+           notifyDataSetChanged()
        } )
     }
 
@@ -40,9 +40,7 @@ class AlarmProfileAdapter( context: AlarmProfileOverviewActivity, model: AlarmPr
 
         viewHolder.profileEdit_.setOnClickListener { run {
             val intent = Intent( context_.applicationContext, AlarmProfileDetailActivity::class.java )
-            intent.putExtra( "EDIT_PROFILE", item as Serializable )
-            intent.putExtra( "POSITION", _viewList.indexOf(item) )
-
+            intent.putExtra( "EDIT_PROFILE", item.name_ )
             context_.startActivityForResult( intent, AlarmProfileOverviewActivity.REQUEST_EDIT_PROFILE)
         } }
     }
@@ -67,7 +65,6 @@ class AlarmProfileAdapter( context: AlarmProfileOverviewActivity, model: AlarmPr
         if( position < 0 || position >= _viewList.size ) {
             return
         }
-        _viewList.removeAt( position )
         notifyItemRemoved( position )
     }
 
@@ -75,5 +72,10 @@ class AlarmProfileAdapter( context: AlarmProfileOverviewActivity, model: AlarmPr
         val item = _viewList.removeAt(from)
         _viewList.add( to, item )
         notifyItemMoved( from, to )
+        updateOrder()
+    }
+
+    private fun updateOrder() {
+        _viewList.forEachIndexed { index, alarmProfile -> alarmProfile.setOrder( index )  }
     }
 }

@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
+import com.allarma.hammington.SetAlarmWorker
 import com.allarma.hammington.model.Alarm
 import com.allarma.hammington.model.AlarmProfileViewModel
 import com.allarma.hammington.model.AlarmProfileWithAlarms
@@ -47,6 +50,9 @@ class AlarmProfileOverviewActivity : AppCompatActivity() {
             intent.putExtra( "ORDER", viewAdapter_.itemCount )
             startActivity( intent )
         } }
+
+        val setAlarmWorker = OneTimeWorkRequestBuilder<SetAlarmWorker>().build()
+        WorkManager.getInstance(applicationContext).enqueue(setAlarmWorker)
     }
 
     fun mergeProfiles()
@@ -63,7 +69,7 @@ class AlarmProfileOverviewActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        model.updateAll();
+        model.updateAll()
     }
 
     companion object {

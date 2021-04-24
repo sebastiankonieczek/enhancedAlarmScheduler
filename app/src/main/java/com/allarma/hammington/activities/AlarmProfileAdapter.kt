@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.allarma.hammington.model.AlarmProfile
 import com.allarma.hammington.model.AlarmProfileViewModel
@@ -23,11 +22,11 @@ class AlarmProfileAdapter( context: AlarmProfileOverviewActivity, model: AlarmPr
     }
 
     init {
-       model.getProfiles().observe( context, Observer { newList ->
+       model.getProfiles().observe( context, { newList ->
            _viewList = newList.toMutableList()
            updateOrder()
            notifyDataSetChanged()
-       } )
+       })
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {

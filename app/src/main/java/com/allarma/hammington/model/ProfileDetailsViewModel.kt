@@ -17,10 +17,11 @@ class ProfileDetailsViewModel(application: Application) : AndroidViewModel(appli
    private val appDatabase = AppDatabase(application)
    private val dao: AlarmProfileDao = appDatabase.dao()
    private lateinit var _profile: AlarmProfileWithAlarms
+   private var _isNewAlarm: Boolean = false;
+
    private val _alarms: MutableLiveData<List<Alarm>> by lazy {
       MutableLiveData<List<Alarm>>()
    }
-   private var _isNewAlarm: Boolean = false;
 
    fun withProfile(profileName: String) {
       runBlocking {
@@ -86,8 +87,8 @@ class ProfileDetailsViewModel(application: Application) : AndroidViewModel(appli
       }
    }
 
-   fun checkProfileName(): Boolean {
-      return runBlocking {
+   fun isProfileNameValid(): Boolean {
+      return !_isNewAlarm || runBlocking {
          viewModelScope.async( Dispatchers.IO ) {
             return@async dao.getAlarmProfile( _profile.alarmProfile_.name_ ) == null
          }.await()

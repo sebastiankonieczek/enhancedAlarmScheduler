@@ -6,6 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.allarma.hammington.model.AlarmProfile
@@ -40,7 +43,7 @@ class AlarmProfileAdapter( context: AlarmProfileOverviewActivity, model: AlarmPr
         viewHolder.profileEdit_.setOnClickListener { run {
             val intent = Intent( context_.applicationContext, AlarmProfileDetailActivity::class.java )
             intent.putExtra( "EDIT_PROFILE", item.name_ )
-            context_.startActivityForResult( intent, AlarmProfileOverviewActivity.REQUEST_EDIT_PROFILE)
+            context_.startActivity( intent )
         } }
     }
 

@@ -1,7 +1,13 @@
 package com.allarma.hammington.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
 import com.allarma.hammington.model.Alarm
 import com.allarma.hammington.model.AlarmProfile
 import com.allarma.hammington.model.AlarmProfileWithAlarms
@@ -44,8 +50,13 @@ internal interface AlarmProfileDao {
         removeProfile( alarmProfile )
     }
 
+    @Transaction
     @Query( "select * from ALARM_PROFILE_ where NAME_ = :profileName" )
     fun getAlarmProfileWithAlarms(profileName: String): AlarmProfileWithAlarms
+
+    @Transaction
+    @Query( "select * from ALARM_PROFILE_ where IS_ACTIVE_ = 1" )
+    fun getActiveAlarmProfileWithAlarms(): List< AlarmProfileWithAlarms >
 
     @Transaction
     @Query("delete from ALARM_ where PROFILE_NAME_ = :profileName")

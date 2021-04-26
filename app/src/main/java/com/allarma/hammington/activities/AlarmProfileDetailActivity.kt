@@ -26,7 +26,7 @@ class AlarmProfileDetailActivity : AppCompatActivity() {
 
       setContentView(R.layout.activity_alarm_profile_detail)
 
-      if (intent.hasExtra("EDIT_PROFILE")) {
+      if(intent.hasExtra("EDIT_PROFILE")) {
          val profileName = intent.extras!!["EDIT_PROFILE"] as String
          model.withProfile(profileName)
       } else {
@@ -35,9 +35,9 @@ class AlarmProfileDetailActivity : AppCompatActivity() {
       }
       viewAdapter_ = AlarmDetailAdapter(this, model)
       viewAdapter_.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
-          override fun onItemRangeRemoved(posStart: Int, numItems: Int) {
-              model.removeAlarms(posStart, numItems)
-          }
+         override fun onItemRangeRemoved(posStart: Int, numItems: Int) {
+            model.removeAlarms(posStart, numItems)
+         }
       })
 
       val viewLayoutManager = LinearLayoutManager(this)
@@ -48,10 +48,10 @@ class AlarmProfileDetailActivity : AppCompatActivity() {
          adapter = viewAdapter_
          layoutManager = viewLayoutManager
       }.addItemDecoration(
-          DividerItemDecoration(
-              this,
-              LinearLayoutManager.VERTICAL
-          )
+         DividerItemDecoration(
+            this,
+            LinearLayoutManager.VERTICAL
+         )
       )
 
       val itemTouchHelper = ItemTouchHelper(SwipeHandlerCallback(viewAdapter_))
@@ -63,11 +63,11 @@ class AlarmProfileDetailActivity : AppCompatActivity() {
       findViewById<Button>(R.id.accept).setOnClickListener {
          run {
             model.setProfileName(alarmProfileNameView.text.toString())
-            if (!model.isProfileNameValid()) {
+            if(!model.isProfileNameValid()) {
                Toast.makeText(
-                   applicationContext,
-                   "This profile already exists!",
-                   Toast.LENGTH_SHORT
+                  applicationContext,
+                  "This profile already exists!",
+                  Toast.LENGTH_SHORT
                ).show()
                return@setOnClickListener
             }

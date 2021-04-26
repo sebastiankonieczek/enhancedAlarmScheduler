@@ -9,7 +9,7 @@ import com.allarma.hammington.model.Alarm
 import com.allarma.hammington.model.AlarmProfile
 import com.allarma.hammington.model.Converters
 
-@Database(entities = [AlarmProfile::class, Alarm::class], version = 2)
+@Database(entities = [AlarmProfile::class, Alarm::class], version = 2, exportSchema = false )
 @TypeConverters(Converters::class)
 internal abstract class AppDatabase : RoomDatabase() {
 

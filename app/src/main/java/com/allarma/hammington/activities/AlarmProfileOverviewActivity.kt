@@ -9,17 +9,16 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.allarma.hammington.SetAlarmWorker
-import com.allarma.hammington.model.Alarm
 import com.allarma.hammington.model.AlarmProfileViewModel
-import com.allarma.hammington.model.AlarmProfileWithAlarms
+import java.util.concurrent.TimeUnit
 
 class AlarmProfileOverviewActivity : AppCompatActivity() {
 
     private lateinit var viewAdapter_: AlarmProfileAdapter
-    private var profiles_: MutableList< AlarmProfileWithAlarms > = mutableListOf()
     private val model: AlarmProfileViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,28 +50,14 @@ class AlarmProfileOverviewActivity : AppCompatActivity() {
             startActivity( intent )
         } }
 
-        val setAlarmWorker = OneTimeWorkRequestBuilder<SetAlarmWorker>().build()
-        WorkManager.getInstance(applicationContext).enqueue(setAlarmWorker)
-    }
-
-    fun mergeProfiles()
-    {
-        val reversedProfiles = profiles_.reversed()
-        val activeAlarms = HashSet< Alarm >()
-        reversedProfiles.forEach{ profile ->
-            if( !profile.alarmProfile_.isActive() ) {
-                return
-            }
-            activeAlarms.addAll( profile.getAlarms() )
-        }
+        val setAlarmWorker = PeriodicWorkRequestBuilder<SetAlarmWorker>( 8, TimeUnit.HOURS ).build()
+        WorkManager
+            .getInstance(this)
+            .enqueueUniquePeriodicWork( "enqueueActiveAlarms", ExistingPeriodicWorkPolicy.KEEP, setAlarmWorker )
     }
 
     override fun onPause() {
         super.onPause()
         model.updateAll()
-    }
-
-    companion object {
-        const val REQUEST_EDIT_PROFILE = 200
     }
 }

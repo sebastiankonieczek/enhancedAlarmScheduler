@@ -21,13 +21,6 @@ class AlarmProfileViewModel( application: Application ) : AndroidViewModel( appl
         return _profiles
     }
 
-    fun addProfile( alarmProfile: AlarmProfile ) {
-        alarmProfile.setOrder(_profiles.value?.size?:0 )
-        viewModelScope.launch( Dispatchers.IO ) {
-            dao.insertAll( alarmProfile )
-        }
-    }
-
     private fun removeProfile(alarmProfile: AlarmProfile ) {
         viewModelScope.launch( Dispatchers.IO ) {
             dao.removeProfileAndAlarms(alarmProfile)
@@ -47,15 +40,5 @@ class AlarmProfileViewModel( application: Application ) : AndroidViewModel( appl
         for( i in 0 until numItems ) {
            removeProfile( _profiles.value?.get(posStart + i )!! )
         }
-    }
-
-    fun addAlarm(alarm_: Alarm) {
-        viewModelScope.launch( Dispatchers.IO ) {
-            dao.insertAlarms( alarm_ )
-        }
-    }
-
-    fun getAlarms(alarmProfile: AlarmProfile): List< Alarm > {
-        return dao.getAlarms( alarmProfile.getName() ).value ?: emptyList()
     }
 }

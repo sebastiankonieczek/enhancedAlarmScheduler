@@ -15,7 +15,6 @@ class BootupReceiver : BroadcastReceiver() {
         launchAlarmWorker(context)
     }
     private fun launchAlarmWorker(context: Context) {
-        println("SET_AL boot")
         val setAlarmWorker = PeriodicWorkRequestBuilder<SetAlarmWorker>( 15, TimeUnit.MINUTES ).build()
 
         WorkManager

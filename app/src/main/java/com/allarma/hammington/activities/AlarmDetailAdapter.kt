@@ -18,11 +18,11 @@ class AlarmDetailAdapter(context: AlarmProfileDetailActivity, model: ProfileDeta
     private val _context = context
 
     init {
-        model.getAlarms().observe( context, Observer { newList ->
+        model.getAlarms().observe( context, { newList ->
             _viewList = newList.toMutableList()
             notifyDataSetChanged()
             updateOrder()
-        } )
+        })
     }
 
     class ViewHolder( view: View ) : RecyclerView.ViewHolder( view ) {
@@ -44,13 +44,12 @@ class AlarmDetailAdapter(context: AlarmProfileDetailActivity, model: ProfileDeta
         }
         else viewHolder.setAlarmTime_.text = null
         viewHolder.setAlarmTime_.setOnClickListener { kotlin.run {
-            TimePickerDialog( _context, TimePickerDialog.OnTimeSetListener { _, hourOfDay, minute ->
+            TimePickerDialog( _context, { _, hourOfDay, minute ->
                 viewHolder.setAlarmTime_.text = createDisplayTime(hourOfDay, minute)
                 item.setHour( hourOfDay )
                 item.setMinute( minute )
             }, item.getHour() ?: 0, item.getMinute() ?: 0, true ).show()
         } }
-
 
         var current = LocalDate.now()
         if( item.getAlarmStartDate() != null ) {
@@ -59,7 +58,7 @@ class AlarmDetailAdapter(context: AlarmProfileDetailActivity, model: ProfileDeta
         }
         else viewHolder.setAlarmBegin_.text = null
         viewHolder.setAlarmBegin_.setOnClickListener{ kotlin.run {
-            val datePicker = DatePickerDialog( _context, DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            val datePicker = DatePickerDialog( _context, { _, year, month, dayOfMonth ->
                 Log.println( Log.INFO,"","${dayOfMonth}${month}${year}" )
                 viewHolder.setAlarmBegin_.text = createDisplayDate( dayOfMonth, month + 1, year )
                 item.setAlarmStartDate( LocalDate.of( year, month, dayOfMonth ) )

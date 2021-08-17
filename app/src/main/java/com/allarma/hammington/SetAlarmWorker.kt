@@ -6,20 +6,21 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.AlarmClock
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.allarma.hammington.activities.AlarmSchedulerService
 import com.allarma.hammington.database.AppDatabase
 import com.allarma.hammington.model.Alarm
 import com.allarma.hammington.model.AlarmProfileWithAlarms
+import kotlinx.coroutines.*
 import java.time.Duration
 import java.time.LocalDate
+import java.util.stream.Collectors
+import kotlin.coroutines.CoroutineContext
 
-class SetAlarmWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
+class SetAlarmWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams), CoroutineScope {
    override fun doWork(): Result {
-
-      Handler(Looper.getMainLooper()).post {
-         Toast.makeText(applicationContext, "Do something.", Toast.LENGTH_SHORT).show()
-      }
 
       AppDatabase.invoke(applicationContext)
          .dao()
@@ -31,14 +32,19 @@ class SetAlarmWorker(appContext: Context, workerParams: WorkerParameters) : Work
          .filter { alarm -> alarm.frequency_ != Alarm.Frequency.UNKNOWN }
          .filter(this::isAlarmRelevant)
          .forEach { alarm ->
-            val intent = Intent(AlarmClock.ACTION_SET_ALARM)
-            intent.putExtra(AlarmClock.EXTRA_SKIP_UI, true)
-            intent.putExtra(AlarmClock.EXTRA_HOUR, alarm.getHour())
-            intent.putExtra(AlarmClock.EXTRA_MINUTES, alarm.getMinute())
-
-            applicationContext.startActivity(intent)
+            runBlocking {
+               launch {
+                  val intent =
+                     Intent(applicationContext, AlarmSchedulerService::class.java)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        .addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                        .putExtra("hour", alarm.getHour())
+                        .putExtra("minute", alarm.getMinute())
+                  ContextCompat.startForegroundService(applicationContext, intent)
+                  delay(200)
+               }
+            }
          }
-
       return Result.success()
    }
 
@@ -47,6 +53,11 @@ class SetAlarmWorker(appContext: Context, workerParams: WorkerParameters) : Work
    }
 
    private fun isToday(frequency: Alarm.Frequency, startDate: LocalDate?): Boolean {
+      val today = LocalDate.now()
+      if(startDate?.isAfter(today) == true) {
+         return false
+      }
+
       if(frequency == Alarm.Frequency.DAILY) {
          return true
       }
@@ -55,10 +66,6 @@ class SetAlarmWorker(appContext: Context, workerParams: WorkerParameters) : Work
          return false
       }
 
-      val today = LocalDate.now()
-      if(startDate.isAfter(today)) {
-         return false
-      }
       return when(frequency) {
          Alarm.Frequency.WEEKLY -> Duration.between(startDate, today).toDays() % 7L == 0L
          Alarm.Frequency.TWO_WEEKLY -> Duration.between(startDate, today).toDays() % 14L == 0L
@@ -72,4 +79,8 @@ class SetAlarmWorker(appContext: Context, workerParams: WorkerParameters) : Work
          else -> false
       }
    }
+
+   override val coroutineContext: CoroutineContext
+      get() = Dispatchers.IO
+
 }

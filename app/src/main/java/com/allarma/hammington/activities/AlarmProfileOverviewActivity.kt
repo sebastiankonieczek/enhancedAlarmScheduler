@@ -1,17 +1,19 @@
 package com.allarma.hammington.activities
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import com.allarma.hammington.SetAlarmWorker
 import com.allarma.hammington.model.AlarmProfileViewModel
 import java.util.concurrent.TimeUnit
@@ -50,10 +52,33 @@ class AlarmProfileOverviewActivity : AppCompatActivity() {
             startActivity( intent )
         } }
 
-        val setAlarmWorker = PeriodicWorkRequestBuilder<SetAlarmWorker>( 8, TimeUnit.HOURS ).build()
+        when (PackageManager.PERMISSION_GRANTED) {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.SET_ALARM) -> {
+                launchAlarmWorker()
+            }
+            else -> {
+                Toast.makeText(applicationContext, "Unable to set alarms without permission!", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun launchAlarmWorker() {
+        val setAlarmWorker = PeriodicWorkRequestBuilder<SetAlarmWorker>( 15, TimeUnit.MINUTES ).build()
+
+        WorkManager
+            .getInstance(this)
+            .cancelUniqueWork("enqueueActiveAlarms")
+
         WorkManager
             .getInstance(this)
             .enqueueUniquePeriodicWork( "enqueueActiveAlarms", ExistingPeriodicWorkPolicy.KEEP, setAlarmWorker )
+
+        WorkManager
+            .getInstance(this)
+            .getWorkInfosForUniqueWorkLiveData("enqueueActiveAlarms")
+            .observe( this, { workInfo: List<WorkInfo> ->
+                workInfo.forEach { i -> println( "" + i.runAttemptCount +  ":" + i.state ) }
+            })
     }
 
     override fun onPause() {

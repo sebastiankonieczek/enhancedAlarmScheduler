@@ -50,25 +50,31 @@ class SetAlarmWorker(appContext: Context, workerParams: WorkerParameters) : Work
          .distinct()
          .filter { alarm -> alarm.frequency_ != Alarm.Frequency.UNKNOWN }
          .filter(this::isAlarmRelevant)
-         .forEach { alarm ->
-            val hour = alarm.getHour()
-            val minute = alarm.getMinute()
-
-            val calendar = Calendar.getInstance()
-            calendar.set(Calendar.HOUR_OF_DAY, hour!!)
-            calendar.set(Calendar.MINUTE, minute!!)
-
-            if(calendar.before(Calendar.getInstance())){
-               calendar.add(Calendar.DATE, 1)
-            }
-            val toEpochSecond = calendar.timeInMillis
-
-            println( "set alarm $hour:$minute" )
-
-            val alarmClockInfo = AlarmManager.AlarmClockInfo(toEpochSecond, contentIntent)
-            alarmManager?.setAlarmClock(alarmClockInfo, broadcast)
-         }
+         .forEach { alarm -> scheduleAlarm(alarm, alarmManager, broadcast) }
       return Result.success()
+   }
+
+   private fun scheduleAlarm(
+      alarm: Alarm,
+      alarmManager: AlarmManager?,
+      broadcast: PendingIntent?
+   ) {
+      val hour = alarm.getHour()
+      val minute = alarm.getMinute()
+
+      val calendar = Calendar.getInstance()
+      calendar.set(Calendar.HOUR_OF_DAY, hour!!)
+      calendar.set(Calendar.MINUTE, minute!!)
+
+      if (calendar.before(Calendar.getInstance())) {
+         calendar.add(Calendar.DATE, 1)
+      }
+      val toEpochSecond = calendar.timeInMillis
+
+      println("set alarm $hour:$minute")
+
+      val alarmClockInfo = AlarmManager.AlarmClockInfo(toEpochSecond, contentIntent)
+      alarmManager?.setAlarmClock(alarmClockInfo, broadcast)
    }
 
    private fun isAlarmRelevant(alarm: Alarm): Boolean {

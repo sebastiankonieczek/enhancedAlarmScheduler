@@ -21,5 +21,7 @@
     <string name="timeHint">HH:MM</string>
     <string name="dateHint">DD:MM:YYYY</string>
     <string name="editAlert">edit alert</string>
+    <string name="alarm_notification_title">Allarma Alarms you!</string>
+    <string name="alarm_notification_text">This is a very important alarm, you better listen to it!</string>
 
 </resources>

@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.work.Worker
 import androidx.work.WorkerParameters
-import com.allarma.hammington.activities.AlarmAction
+import com.allarma.hammington.services.AlarmService
 import com.allarma.hammington.activities.AlarmProfileOverviewActivity
 import com.allarma.hammington.database.AppDatabase
 import com.allarma.hammington.model.Alarm
@@ -17,7 +17,7 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.coroutines.CoroutineContext
 
-class SetAlarmWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams), CoroutineScope {
+class SetAlarmWorker(appContext: Context, workerParams: WorkerParameters) : Worker(appContext, workerParams) {
 
    private val contentIntent by lazy {
       PendingIntent.getActivity(
@@ -33,10 +33,10 @@ class SetAlarmWorker(appContext: Context, workerParams: WorkerParameters) : Work
       val alarmManager =
          applicationContext.getSystemService(Context.ALARM_SERVICE) as? AlarmManager
 
-      val broadcast = PendingIntent.getBroadcast(
+      val broadcast = PendingIntent.getForegroundService(
          applicationContext,
          0,
-         Intent(applicationContext, AlarmAction::class.java),
+         Intent(applicationContext, AlarmService::class.java),
          PendingIntent.FLAG_IMMUTABLE
       )
       alarmManager?.cancel(broadcast)
@@ -108,8 +108,4 @@ class SetAlarmWorker(appContext: Context, workerParams: WorkerParameters) : Work
          else -> false
       }
    }
-
-   override val coroutineContext: CoroutineContext
-      get() = Dispatchers.IO
-
 }

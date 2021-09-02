@@ -52,14 +52,7 @@ class AlarmProfileOverviewActivity : AppCompatActivity() {
             startActivity( intent )
         } }
 
-        when (PackageManager.PERMISSION_GRANTED) {
-            ContextCompat.checkSelfPermission(this, Manifest.permission.SET_ALARM) -> {
-                launchAlarmWorker()
-            }
-            else -> {
-                Toast.makeText(applicationContext, "Unable to set alarms without permission!", Toast.LENGTH_LONG).show()
-            }
-        }
+        launchAlarmWorker()
     }
 
     private fun launchAlarmWorker() {

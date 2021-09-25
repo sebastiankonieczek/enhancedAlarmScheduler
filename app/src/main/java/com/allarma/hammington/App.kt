@@ -11,8 +11,6 @@ class App : Application() {
         createNotificationChannel()
     }
 
-
-
     private fun createNotificationChannel() {
         val notificationChannel = NotificationChannel(
             ApplicationConstants.CHANNEL_ALARM_SERVICE,
